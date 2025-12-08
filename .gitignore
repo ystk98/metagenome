@@ -1,0 +1,10 @@
+# Python
+__pycache__
+*.py[cod]
+.ipynb_checkpoints
+
+# Virtual Environments
+.venv
+
+# IDEs
+.vscode/
