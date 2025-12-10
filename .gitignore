@@ -4,7 +4,7 @@ __pycache__
 .ipynb_checkpoints
 
 # Virtual Environments
-.venv
+hyena
 
 # IDEs
 .vscode/
