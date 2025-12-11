@@ -11,6 +11,7 @@ mkdir -p "$LOG_DIR"
 
 URL_BASE="https://data.ace.uq.edu.au/public/gtdb/data/releases/release226/226.0/"
 URL_REPS=${URL_BASE}"genomic_files_reps/gtdb_genomes_reps_r226.tar.gz"
+URL_EXCLUDE="/public/gtdb/data/releases/release226/226.0/genomic_files_all"
 VERSION="226.0"
 
 TARGET_DIR="$OUT_DIR/$VERSION/genomic_files_reps"
@@ -26,8 +27,8 @@ log "Priority download complete."
 
 log "Downloading all GTDB files except genomic_files_all/..."
 wget -r -c -np -nH --cut-dirs=5 --show-progress -a "$LOG_FILE" \
-  -R "index.html*" \
-  -X "genomic_files_all" \
+  -R "index.html*,robots.txt" \
+  -X "$URL_EXCLUDE" \
   -P "$OUT_DIR" \
   "$URL_BASE"
 log "All downloads complete!"
