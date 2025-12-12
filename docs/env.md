@@ -171,6 +171,12 @@ This doctument is record of environment construction.
   (hyena) yasutake@luna:~/research/projects/metagenome$ uv pip install -r requirements/hyena.txt
   (hyena) yasutake@luna:~/research/projects/metagenome$ echo "$(pwd)/external/hyena-dna" > hyena/lib/python3.11/site-packages/hyena_dna_path.pth # add external/hyena-dna path in hyena environment
 ```
+- 2025-12-12 Install Ipykernel to hyena environment
+```shell
+  (hyena) yasutake@luna:~/research/projects/metagenome$ uv pip install ipykernel
+  (hyena) yasutake@luna:~/research/projects/metagenome$ python -m ipykernel install --user --name=hyena
+  (hyena) yasutake@luna:~/research/projects/metagenome$ uv pip freeze > requirements/hyena.txt
+```
 <!-- - 2025-12-10 Create mamba environment
 ```shell
   yasutake@luna:/nfs_share/yasutake/projects/metagenome$ uv venv mamba --python 3.11
