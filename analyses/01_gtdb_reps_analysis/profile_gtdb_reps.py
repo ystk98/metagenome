@@ -107,7 +107,7 @@ def main():
 
     # Output directory
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    out_dir = Path.cwd()/"results"/timestamp
+    out_dir = Path.cwd()/"out"/timestamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
     with open(out_dir/"config.yaml", 'w') as f:

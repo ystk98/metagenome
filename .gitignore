@@ -12,4 +12,4 @@ hyena
 # Project
 data/
 logs/
-results/
+out/
