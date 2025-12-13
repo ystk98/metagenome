@@ -17,7 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--metadata_bac", default="../../data/gtdb/226.0/bac120_metadata_r226.tsv.gz")
     parser.add_argument("--metadata_ar", default="../../data/gtdb/226.0/ar53_metadata_r226.tsv.gz")
-    parser.add_argument("--genome_dir", default="../../data/gtdb/226.0/genomic_files_reps/gtdb_genomes_reps_r226/")
+    parser.add_argument("--genome_dir", default="../../data/gtdb/226.0/genomic_files_reps/gtdb_genomes_reps_r226/database/")
     parser.add_argument("--n_workers", type=int, default=32)
     return parser.parse_args()
 
@@ -106,7 +106,7 @@ def main():
     args.genome_dir = str(Path(args.genome_dir).resolve())
 
     # Output directory
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     out_dir = Path.cwd()/"results"/timestamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -132,13 +132,24 @@ def main():
 
     df_res = pd.DataFrame(results)
 
-    # Merge & N_ratio & output
+    # Merge & N_ratio
     log.info("Merging results...")
     df_ex = pd.merge(df, df_res, on="accession", how="left")
     ambiguous = pd.to_numeric(df_ex['ambiguous_bases'], errors='coerce')
     genome_size = pd.to_numeric(df_ex['genome_size'], errors='coerce')
     df_ex['N_ratio'] = ambiguous/genome_size
 
+    # Taxonomy
+    log.info("Splitting taxonomy into columns...")
+    tax_cols = ["domain", "phylum", "class", "order", "family", "genus", "species"]
+    df_tax = df_ex['gtdb_taxonomy'].str.split(';', expand=True)
+    if df_tax.shape[1] == 7:
+        df_tax.columns = tax_cols
+        df_ex = pd.concat([df_ex, df_tax], axis=1)
+    else:
+        log.warning("Taxonomy column format was unexpected. Skipping split.")
+
+    # Output
     out_path = out_dir/"metadata_ex.tsv"
     df_ex.to_csv(out_path, sep='\t', index=False)
     log.info(f"Done. Saved to {out_path}")
