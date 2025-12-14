@@ -25,6 +25,7 @@ def main(cfg: DictConfig):
     # 1. Load Data
     log.info("Loading metadata...")
     df = pd.read_csv(cfg.paths.metadata, sep='\t', low_memory=False)
+    df = df[df["file_status"]=='found']
     log.info(f"Total genomes matched: {len(df)}")
 
     # 2. Filtering
