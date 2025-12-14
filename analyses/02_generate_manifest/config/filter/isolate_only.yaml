@@ -1,6 +1,0 @@
-genome_category: 
-  - "none"
-
-quality_tool: "checkm2"
-min_completeness: 0.0
-max_contamination: 5.0
