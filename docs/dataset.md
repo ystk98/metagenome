@@ -33,3 +33,12 @@ This document is record of procedure to create training (& others) datasets.
 ```shell
     (hyena) yasutake@luna:~/research/projects/metagenome/analyses/01_gtdb_reps_analysis$ python profile_gtdb_reps.py 
 ```
+
+# 02_generate_manifest
+## Objective
+- Generate manifest file to genedate training dataset
+## Command
+- 2025-12-14 Perform generation with isolated genomes only
+```shell
+    yasutake@luna:~/research/projects/metagenome$ python analyses/02_generate_manifest/generate_manifest.py 
+```
