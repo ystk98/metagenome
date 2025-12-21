@@ -1,0 +1,11 @@
+paths:
+  gtdb_dir: "${hydra:runtime.cwd}/data/gtdb/"
+  gtdb_split_dir: "${hydra:runtime.cwd}/data/gtdb_split/"
+  metadata: "${hydra:runtime.cwd}/analyses/01_gtdb_reps_analysis/out/2025-12-13_01-13-11/metadata_ex.tsv"
+unknown_mode: "chromosome"
+hydra:
+  run:
+    dir: "${hydra:runtime.cwd}/analyses/02_split_plasmids/out/${now:%Y-%m-%d_%H-%M-%S}"
+  output_subdir: config
+  job: 
+    chdir: True

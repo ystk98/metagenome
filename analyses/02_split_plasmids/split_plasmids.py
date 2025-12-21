@@ -43,24 +43,24 @@ def classify_sequence(description):
 
 def process_genome(
         file_path: Path, 
-        out_dir: Path, 
+        target_dir: Path, 
         cfg: DictConfig
 ):
     """"Split single genome file into chromosome & plasmid.
     Args: 
         file_path (Path): Path to original genome file (.fna.gz)
-        out_dir (Path): Directory path to output chromosome & plasmids
+        target_dir (Path): Directory path to output chromosome & plasmids
         cfg (DictConfig): Config
     """
-    out_dir.mkdir(parents=True, exist_ok=True)
+    target_dir.mkdir(parents=True, exist_ok=True)
     name = file_path.name
     for ext in ['.gz', '.fna', '.fa', '.fasta']:
         name = name.replace(ext, "")
     # file_name = file_path.name
     # stem = file_name.replace(".fna.gz", "").replace(".fna", "")
 
-    chromosome_path = out_dir/f"{name}_chromosome.fna.gz"
-    plasmid_path = out_dir/f"{name}_plasmid.fna.gz"
+    chromosome_path = target_dir/f"{name}_chromosome.fna.gz"
+    plasmid_path = target_dir/f"{name}_plasmid.fna.gz"
     if chromosome_path.exists(): # for resume function
         p_path_str = str(plasmid_path) if plasmid_path.exists() else None
         return "skipped", str(chromosome_path), p_path_str
@@ -101,14 +101,14 @@ def process_genome(
         return "error", None, None
 
 
-@hydra.main(version_base=None, config_path="config", config_name="config")
+@hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg: DictConfig):
     log.info("Starting Genome Split Process...")
     log.info(f"Config:\n{OmegaConf.to_yaml(cfg)}")
 
     # Path
     gtdb_dir = Path(cfg.paths.gtdb_dir).resolve()
-    out_dir = gtdb_dir.parent/"gtdb_split"    
+    gtdb_split_dir = Path(cfg.paths.gtdb_split_dir).resolve()
 
     # Metadata
     log.info(f"Loading metadata from {cfg.paths.metadata}...")
@@ -124,9 +124,9 @@ def main(cfg: DictConfig):
         
         original_path = Path(row['local_file_path']).resolve()
         rel_path = original_path.relative_to(gtdb_dir)
-        split_dir = out_dir/rel_path.parent
+        target_dir = gtdb_split_dir/rel_path.parent
 
-        status, c_path, p_path = process_genome(original_path, split_dir, cfg)
+        status, c_path, p_path = process_genome(original_path, target_dir, cfg)
         stats[status] += 1
         if status in ["success", "skipped"] and c_path is not None:
             summary.append({
@@ -135,9 +135,9 @@ def main(cfg: DictConfig):
                 "plasmid_path": p_path
             })
 
-    out_dir.mkdir(parents=True, exist_ok=True)
-    summary_path = out_dir / "split_summary.csv"
-    pd.DataFrame(summary).to_csv(summary_path, index=False)
+    # Output summary
+    summary_path = Path("split_summary.csv")
+    pd.DataFrame(summary).to_csv(summary_path, index=False) # assume hydra.job.chdir: True
 
     log.info(f"Processing complete. Stats: {stats}")
     log.info(f"Summary saved to: {summary_path}")

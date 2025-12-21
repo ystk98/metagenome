@@ -42,6 +42,7 @@ idna==3.4
 ipykernel==7.1.0
 ipython==9.8.0
 ipython-pygments-lexers==1.1.1
+ipywidgets==8.1.8
 jedi==0.19.2
 jinja2==3.1.6
 joblib==1.5.2
@@ -49,6 +50,7 @@ jsonschema==4.25.1
 jsonschema-specifications==2025.9.1
 jupyter-client==8.7.0
 jupyter-core==5.9.1
+jupyterlab-widgets==3.0.16
 kiwisolver==1.4.9
 liftover==1.3.3
 lightning-utilities==0.15.2
@@ -135,5 +137,6 @@ urllib3==1.26.13
 wandb==0.23.1
 wcwidth==0.2.14
 wheel==0.45.1
+widgetsnbextension==4.0.15
 xxhash==3.6.0
 yarl==1.22.0

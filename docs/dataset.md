@@ -45,6 +45,24 @@ This document is record of procedure to create training (& others) datasets.
     (hyena) yasutake@luna:~/research/projects/metagenome$ mkdir -p /nfs_share/yasutake/projects/metagenome/gtdb_split/226.0
     (hyena) yasutake@luna:~/research/projects/metagenome$ ln -s /nfs_share/yasutake/projects/metagenome/gtdb_split/226.0 ./data/gtdb_split/226.0
 ```
+- 2025-12-15 Perform split
+```shell
+    (hyena) yasutake@luna:~/research/projects/metagenome$ python analyses/02_split_plasmids/split_plasmids.py
+```
+## Note
+- 2025-12-21 On detection reason of split_summary.csv.
+    - **Issue**: Original `split_plasmids.py` recorded detection reasons only in FASTA headers, missing them in `split_summary.csv`.
+    - **Resolution**: Ran a patch script (`notebooks/patch_detect_reason.ipynb`) to extract reasons from generated files and merge them into the CSV.
+    - **Future work**: This logic should be integrated into the main script (`split_plasmids.py`) for future runs.
+- 2025-12-21 Data Integrity Assessment & Decision to Re-run
+    - **Observation**: During the visualization of `split_summary.csv`, specific error logs (`CRC check failed`, `Compressed file ended before end-of-stream`) were detected in the reason columns (ref. `notebooks/split_summary_stats.ipynb`) .
+    - **Root Cause**: These errors were likely caused by manual interruptions (`Ctrl+C`) during the initial single-process execution, which took approx. 4.5 days.
+    - **Risk**: There is a possibility of "silent corruption" (e.g., truncated files that were recorded as success in CSV but are physically incomplete). Using this dataset poses a significant risk to downstream model training (e.g., DataLoader crashes).
+    - **Decision**: Instead of surgically repairing specific files, **the entire dataset will be re-generated** to ensure scientific integrity.
+    - **Action Plan**:
+        1.  Refactor script `split_genomes.py` using `multiprocessing` to drastically reduce processing time.
+        2.  Implement atomic write operations and immediate file size validation to prevent corrupted files from being registered.
+        3.  The logic for "detection reason" logging (previously patched) will be natively integrated into the new script.
 
 # 03_generate_manifest
 ## Objective
